@@ -1,0 +1,5 @@
+{
+  "name": "Maître des Multiples",
+  "description": "Une application web pour vous aider à réviser les diviseurs, les multiples et les nombres premiers avec des quiz, des cartes mémoire et des défis. Suivez votre progression et devenez un expert !",
+  "requestFramePermissions": []
+}
