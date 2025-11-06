@@ -1,14 +1,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { MCQ, Flashcard } from '../types';
 
-if (!process.env.API_KEY) {
-  // This is a placeholder for environments where the key is not set.
-  // In a real deployed environment, the key would be present.
-  console.warn("API_KEY environment variable not set. Using a placeholder. This will fail if you make a real API call.");
-  // A more robust app might pop a UI alert here, but per instructions, we assume it's configured.
-}
+// Initialisation lazy de l'API - seulement quand nécessaire
+let ai: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const getAI = () => {
+  if (!ai) {
+    const apiKey = process.env.API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Clé API Gemini non configurée. Le module mathématiques nécessite une clé API.");
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 const mcqSchema = {
   type: Type.ARRAY,
@@ -52,7 +57,8 @@ La sortie doit être un objet JSON valide qui respecte le schéma fourni.
 
 export const generateMCQs = async (count: number = 10): Promise<MCQ[]> => {
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    const response = await aiInstance.models.generateContent({
       model: "gemini-2.5-flash",
       contents: createMCQPrompt(count),
       config: {
@@ -70,7 +76,8 @@ export const generateMCQs = async (count: number = 10): Promise<MCQ[]> => {
 
 export const generateFlashcards = async (count: number = 10): Promise<Flashcard[]> => {
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    const response = await aiInstance.models.generateContent({
       model: "gemini-2.5-flash",
       contents: createFlashcardPrompt(count),
       config: {
@@ -88,7 +95,8 @@ export const generateFlashcards = async (count: number = 10): Promise<Flashcard[
 
 export const generateExplanation = async (question: string): Promise<string> => {
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    const response = await aiInstance.models.generateContent({
       model: "gemini-2.5-flash",
       contents: `Explique le concept mathématique derrière la question suivante de manière simple et concise pour un élève de collège (11-14 ans). N'utilise pas de jargon complexe. La question est : "${question}"`,
     });
