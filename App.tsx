@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HomePage from './components/HomePage';
 import SubjectGrid from './components/SubjectGrid';
 import { ChapterList } from './components/ChapterList';
@@ -12,6 +12,11 @@ type AppView =
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>({ type: 'home' });
+
+  // Scroll to top whenever the view changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentView]);
 
   const handleSelectGrade = (gradeId: Grade) => {
     setCurrentView({ type: 'grade-subjects', gradeId });
@@ -63,7 +68,8 @@ const App: React.FC = () => {
 
         return (
           <ChapterList
-            level={`${subject.name} - ${grade.name}`}
+            title={subject.name}
+            subtitle={grade.name}
             chapters={subject.chapters}
             onSelectChapter={handleSelectChapter}
             onBack={() => setCurrentView({ type: 'grade-subjects', gradeId: currentView.gradeId })}

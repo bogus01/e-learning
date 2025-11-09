@@ -1,16 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import type { MathChapter, MathLevel } from '../types/curriculum';
+import type { Chapter } from '../types/curriculum';
 
 interface ChapterListProps {
-  level: MathLevel;
-  chapters: MathChapter[];
+  title: string;
+  subtitle?: string;
+  chapters: Chapter[];
   onSelectChapter: (chapterId: string) => void;
   onBack: () => void;
 }
 
 type ViewMode = 'grid' | 'list';
 
-export const ChapterList: React.FC<ChapterListProps> = ({ level, chapters, onSelectChapter, onBack }) => {
+export const ChapterList: React.FC<ChapterListProps> = ({ title, subtitle, chapters, onSelectChapter, onBack }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -34,16 +35,18 @@ export const ChapterList: React.FC<ChapterListProps> = ({ level, chapters, onSel
           className="mb-8 flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           <span className="text-2xl">←</span>
-          <span className="text-lg font-medium">Retour aux niveaux</span>
+          <span className="text-lg font-medium">Retour aux matières</span>
         </button>
 
         {/* En-tête */}
         <div className="text-center mb-8">
-          <div className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-6 py-2 rounded-full text-lg font-semibold mb-4">
-            Classe de {level.toUpperCase()}
-          </div>
+          {subtitle && (
+            <div className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-6 py-2 rounded-full text-lg font-semibold mb-4">
+              {subtitle}
+            </div>
+          )}
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Chapitres de Mathématiques
+            {title}
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
             {filteredChapters.length} chapitre{filteredChapters.length > 1 ? 's' : ''} {searchQuery && `trouvé${filteredChapters.length > 1 ? 's' : ''}`}

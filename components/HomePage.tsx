@@ -31,33 +31,33 @@ export default function HomePage({ onSelectGrade }: HomePageProps) {
         </div>
 
         {/* Statistiques */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 max-w-4xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center transform hover:scale-105 transition-transform">
-            <div className="text-5xl mb-3">📚</div>
-            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 text-center transform hover:scale-[1.02] transition-transform border border-gray-200 dark:border-gray-700">
+            <div className="text-4xl mb-2">📚</div>
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
               {stats.totalChapters}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 font-medium">
+            <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               Leçons disponibles
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center transform hover:scale-105 transition-transform">
-            <div className="text-5xl mb-3">🎯</div>
-            <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 text-center transform hover:scale-[1.02] transition-transform border border-gray-200 dark:border-gray-700">
+            <div className="text-4xl mb-2">🎯</div>
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">
               {stats.totalGrades}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 font-medium">
+            <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               Niveaux scolaires
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center transform hover:scale-105 transition-transform">
-            <div className="text-5xl mb-3">📖</div>
-            <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 text-center transform hover:scale-[1.02] transition-transform border border-gray-200 dark:border-gray-700">
+            <div className="text-4xl mb-2">📖</div>
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
               {Math.round(stats.totalSubjects)}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 font-medium">
+            <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               Matières par niveau
             </div>
           </div>
@@ -137,39 +137,41 @@ export default function HomePage({ onSelectGrade }: HomePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {allGrades.map((grade) => {
               const gradeStats = stats.grades.find(g => g.id === grade.id);
-              
+
               return (
                 <button
                   key={grade.id}
                   onClick={() => onSelectGrade(grade.id)}
-                  className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300 border-2 border-transparent hover:border-blue-500"
+                  className="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
                 >
-                  <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">
+                  {/* Badge nombre de chapitres */}
+                  <div className="absolute top-4 right-4 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-3 py-1 rounded-full text-xs font-semibold">
+                    {gradeStats?.chapterCount} chapitres
+                  </div>
+
+                  {/* Icône */}
+                  <div className="text-5xl mb-3">
                     {grade.id === '6e' ? '📘' : grade.id === '5e' ? '📗' : '📙'}
                   </div>
-                  
+
+                  {/* Titre */}
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
                     {grade.name}
                   </h3>
-                  
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                     {grade.description}
                   </p>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-center space-x-2 text-blue-600 dark:text-blue-400">
-                      <span>📚</span>
-                      <span className="font-semibold">{gradeStats?.subjectCount} matières</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-purple-600 dark:text-purple-400">
-                      <span>📖</span>
-                      <span className="font-semibold">{gradeStats?.chapterCount} chapitres</span>
-                    </div>
+
+                  {/* Badge matières */}
+                  <div className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+                    {gradeStats?.subjectCount} matières disponibles
                   </div>
-                  
-                  <div className="mt-6 inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:translate-x-2 transition-transform">
-                    <span>Commencer</span>
-                    <span>→</span>
+
+                  {/* Flèche */}
+                  <div className="absolute bottom-4 right-4 text-2xl opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                    →
                   </div>
                 </button>
               );
