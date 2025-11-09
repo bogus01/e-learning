@@ -1,32 +1,24 @@
 import React, { useState } from 'react';
-import { SubjectSelector } from './components/SubjectSelector';
-import { MathLevelSelector } from './components/MathLevelSelector';
+import HomePage from './components/HomePage';
+import SubjectGrid from './components/SubjectGrid';
 import { ChapterList } from './components/ChapterList';
-import { GeoHistorySelector } from './components/GeoHistorySelector';
-import type { Subject, MathLevel } from './types/curriculum';
-import { math6eConfig } from './data/curriculum/math6e';
-import { math5eConfig } from './data/curriculum/math5e';
-import { math4eConfig } from './data/curriculum/math4e';
+import type { Grade } from './types/curriculum';
+import { getGradeById } from './data/curriculum/levels';
 
 type AppView =
-  | { type: 'subject-selection' }
-  | { type: 'math-level-selection' }
-  | { type: 'math-chapter-list'; level: MathLevel }
-  | { type: 'geo-history-selection' };
+  | { type: 'home' }
+  | { type: 'grade-subjects'; gradeId: Grade }
+  | { type: 'subject-chapters'; gradeId: Grade; subjectId: string };
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<AppView>({ type: 'subject-selection' });
+  const [currentView, setCurrentView] = useState<AppView>({ type: 'home' });
 
-  const handleSelectSubject = (subject: Subject) => {
-    if (subject === 'mathematics') {
-      setCurrentView({ type: 'math-level-selection' });
-    } else {
-      setCurrentView({ type: 'geo-history-selection' });
-    }
+  const handleSelectGrade = (gradeId: Grade) => {
+    setCurrentView({ type: 'grade-subjects', gradeId });
   };
 
-  const handleSelectMathLevel = (level: MathLevel) => {
-    setCurrentView({ type: 'math-chapter-list', level });
+  const handleSelectSubject = (gradeId: Grade, subjectId: string) => {
+    setCurrentView({ type: 'subject-chapters', gradeId, subjectId });
   };
 
   const handleSelectChapter = (chapterId: string) => {
@@ -34,50 +26,53 @@ const App: React.FC = () => {
     // TODO: Implémenter la navigation vers les quiz/flashcards du chapitre
   };
 
-  const handleSelectLesson = (lessonId: string) => {
-    console.log('Leçon sélectionnée:', lessonId);
-    // TODO: Implémenter la navigation vers les quiz/flashcards de la leçon
-  };
-
   const renderContent = () => {
     switch (currentView.type) {
-      case 'subject-selection':
-        return <SubjectSelector onSelectSubject={handleSelectSubject} />;
+      case 'home':
+        return <HomePage onSelectGrade={handleSelectGrade} />;
 
-      case 'math-level-selection':
-        return (
-          <MathLevelSelector
-            onSelectLevel={handleSelectMathLevel}
-            onBack={() => setCurrentView({ type: 'subject-selection' })}
-          />
-        );
-
-      case 'math-chapter-list': {
-        const levelConfig =
-          currentView.level === '6e' ? math6eConfig :
-          currentView.level === '5e' ? math5eConfig :
-          math4eConfig;
+      case 'grade-subjects': {
+        const grade = getGradeById(currentView.gradeId);
+        if (!grade) return <HomePage onSelectGrade={handleSelectGrade} />;
 
         return (
-          <ChapterList
-            level={currentView.level}
-            chapters={levelConfig.chapters}
-            onSelectChapter={handleSelectChapter}
-            onBack={() => setCurrentView({ type: 'math-level-selection' })}
+          <SubjectGrid
+            gradeName={grade.name}
+            subjects={grade.subjects}
+            onSelectSubject={(subjectId) => handleSelectSubject(currentView.gradeId, subjectId)}
+            onBack={() => setCurrentView({ type: 'home' })}
           />
         );
       }
 
-      case 'geo-history-selection':
+      case 'subject-chapters': {
+        const grade = getGradeById(currentView.gradeId);
+        if (!grade) return <HomePage onSelectGrade={handleSelectGrade} />;
+
+        const subject = grade.subjects.find(s => s.id === currentView.subjectId);
+        if (!subject) {
+          return (
+            <SubjectGrid
+              gradeName={grade.name}
+              subjects={grade.subjects}
+              onSelectSubject={(subjectId) => handleSelectSubject(currentView.gradeId, subjectId)}
+              onBack={() => setCurrentView({ type: 'home' })}
+            />
+          );
+        }
+
         return (
-          <GeoHistorySelector
-            onSelectLesson={handleSelectLesson}
-            onBack={() => setCurrentView({ type: 'subject-selection' })}
+          <ChapterList
+            level={`${subject.name} - ${grade.name}`}
+            chapters={subject.chapters}
+            onSelectChapter={handleSelectChapter}
+            onBack={() => setCurrentView({ type: 'grade-subjects', gradeId: currentView.gradeId })}
           />
         );
+      }
 
       default:
-        return <SubjectSelector onSelectSubject={handleSelectSubject} />;
+        return <HomePage onSelectGrade={handleSelectGrade} />;
     }
   };
 

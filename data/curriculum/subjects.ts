@@ -56,34 +56,6 @@ export const subjects: SubjectConfig[] = [
     icon: '🔧',
     description: 'Objets techniques, programmation et innovation',
     color: 'from-slate-500 to-gray-600'
-  },
-  {
-    id: 'arts-plastiques',
-    name: 'Arts Plastiques',
-    icon: '🎨',
-    description: 'Création artistique et expression visuelle',
-    color: 'from-fuchsia-500 to-purple-600'
-  },
-  {
-    id: 'musique',
-    name: 'Éducation Musicale',
-    icon: '🎵',
-    description: 'Chant, écoute et création musicale',
-    color: 'from-violet-500 to-indigo-600'
-  },
-  {
-    id: 'eps',
-    name: 'EPS',
-    icon: '⚽',
-    description: 'Éducation Physique et Sportive',
-    color: 'from-orange-500 to-red-600'
-  },
-  {
-    id: 'emc',
-    name: 'EMC',
-    icon: '🗳️',
-    description: 'Enseignement Moral et Civique',
-    color: 'from-sky-500 to-blue-600'
   }
 ];
 

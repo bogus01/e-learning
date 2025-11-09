@@ -187,3 +187,14 @@ export const geoHistoryConfig = {
   }
 };
 
+// Exports par niveau pour faciliter l'utilisation
+export const geoHistory6e = {
+  geography: geo6eLessons,
+  history: hist6eLessons
+};
+
+export const geoHistory5e = {
+  geography: geo5eLessons,
+  history: hist5eLessons
+};
+

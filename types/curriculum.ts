@@ -8,11 +8,7 @@ export type Subject =
   | 'spanish'
   | 'svt'
   | 'physique-chimie'
-  | 'technologie'
-  | 'arts-plastiques'
-  | 'musique'
-  | 'eps'
-  | 'emc';
+  | 'technologie';
 
 export type MathLevel = '6e' | '5e' | '4e';
 export type Grade = '6e' | '5e' | '4e' | '3e';
