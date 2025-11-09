@@ -1,50 +1,89 @@
-import React, { useState, useCallback } from 'react';
-import Header from './components/Header';
-import Home from './components/Home';
-import MultipleChoice from './components/MultipleChoice';
-import Flashcard from './components/Flashcard';
-import Challenge from './components/Challenge';
-import Progress from './components/Progress';
-import PrimeFactorization from './components/PrimeFactorization';
-import GeographyMultipleChoice from './components/GeographyMultipleChoice';
-import GeographyFlashcard from './components/GeographyFlashcard';
-import { View } from './types';
+import React, { useState } from 'react';
+import { SubjectSelector } from './components/SubjectSelector';
+import { MathLevelSelector } from './components/MathLevelSelector';
+import { ChapterList } from './components/ChapterList';
+import { GeoHistorySelector } from './components/GeoHistorySelector';
+import type { Subject, MathLevel } from './types/curriculum';
+import { math6eConfig } from './data/curriculum/math6e';
+import { math5eConfig } from './data/curriculum/math5e';
+import { math4eConfig } from './data/curriculum/math4e';
+
+type AppView =
+  | { type: 'subject-selection' }
+  | { type: 'math-level-selection' }
+  | { type: 'math-chapter-list'; level: MathLevel }
+  | { type: 'geo-history-selection' };
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>('home');
+  const [currentView, setCurrentView] = useState<AppView>({ type: 'subject-selection' });
 
-  const navigate = useCallback((view: View) => {
-    setCurrentView(view);
-  }, []);
+  const handleSelectSubject = (subject: Subject) => {
+    if (subject === 'mathematics') {
+      setCurrentView({ type: 'math-level-selection' });
+    } else {
+      setCurrentView({ type: 'geo-history-selection' });
+    }
+  };
+
+  const handleSelectMathLevel = (level: MathLevel) => {
+    setCurrentView({ type: 'math-chapter-list', level });
+  };
+
+  const handleSelectChapter = (chapterId: string) => {
+    console.log('Chapitre sélectionné:', chapterId);
+    // TODO: Implémenter la navigation vers les quiz/flashcards du chapitre
+  };
+
+  const handleSelectLesson = (lessonId: string) => {
+    console.log('Leçon sélectionnée:', lessonId);
+    // TODO: Implémenter la navigation vers les quiz/flashcards de la leçon
+  };
 
   const renderContent = () => {
-    switch (currentView) {
-      case 'mcq':
-        return <MultipleChoice onBack={() => navigate('home')} />;
-      case 'flashcard':
-        return <Flashcard onBack={() => navigate('home')} />;
-      case 'challenge':
-        return <Challenge onBack={() => navigate('home')} />;
-      case 'prime-factorization':
-        return <PrimeFactorization onBack={() => navigate('home')} />;
-      case 'progress':
-        return <Progress onBack={() => navigate('home')} />;
-      case 'geography-mcq':
-        return <GeographyMultipleChoice onBack={() => navigate('home')} />;
-      case 'geography-flashcard':
-        return <GeographyFlashcard onBack={() => navigate('home')} />;
-      case 'home':
+    switch (currentView.type) {
+      case 'subject-selection':
+        return <SubjectSelector onSelectSubject={handleSelectSubject} />;
+
+      case 'math-level-selection':
+        return (
+          <MathLevelSelector
+            onSelectLevel={handleSelectMathLevel}
+            onBack={() => setCurrentView({ type: 'subject-selection' })}
+          />
+        );
+
+      case 'math-chapter-list': {
+        const levelConfig =
+          currentView.level === '6e' ? math6eConfig :
+          currentView.level === '5e' ? math5eConfig :
+          math4eConfig;
+
+        return (
+          <ChapterList
+            level={currentView.level}
+            chapters={levelConfig.chapters}
+            onSelectChapter={handleSelectChapter}
+            onBack={() => setCurrentView({ type: 'math-level-selection' })}
+          />
+        );
+      }
+
+      case 'geo-history-selection':
+        return (
+          <GeoHistorySelector
+            onSelectLesson={handleSelectLesson}
+            onBack={() => setCurrentView({ type: 'subject-selection' })}
+          />
+        );
+
       default:
-        return <Home onNavigate={navigate} />;
+        return <SubjectSelector onSelectSubject={handleSelectSubject} />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header onNavigate={navigate} />
-      <main className="flex-grow container mx-auto p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
-        {renderContent()}
-      </main>
+    <div className="min-h-screen">
+      {renderContent()}
     </div>
   );
 };
