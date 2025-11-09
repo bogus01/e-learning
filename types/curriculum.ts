@@ -1,8 +1,21 @@
 // Types pour la structure du curriculum par matière et niveau
 
-export type Subject = 'mathematics' | 'geography-history';
+export type Subject =
+  | 'mathematics'
+  | 'french'
+  | 'geography-history'
+  | 'english'
+  | 'spanish'
+  | 'svt'
+  | 'physique-chimie'
+  | 'technologie'
+  | 'arts-plastiques'
+  | 'musique'
+  | 'eps'
+  | 'emc';
 
 export type MathLevel = '6e' | '5e' | '4e';
+export type Grade = '6e' | '5e' | '4e' | '3e';
 
 export interface Chapter {
   id: string;
